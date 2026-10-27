@@ -7,6 +7,8 @@ import type { BackgroundHandle, BackgroundPreset } from "asciify-engine/kit";
 import { getConfig, subscribeConfig } from "./config";
 
 declare const document: any;
+declare const window: any;
+declare function getComputedStyle(el: any): any;
 declare function setInterval(cb: () => void, ms: number): any;
 declare function clearInterval(id: any): void;
 
@@ -17,28 +19,48 @@ export function installChatBackground(): () => void {
 
   let handle: BackgroundHandle | null = null;
   let host: any = null;
+  let scroller: any = null;
   let stopped = false;
 
   const detach = () => {
     handle?.destroy();
-    handle = host = null;
+    handle = host = scroller = null;
+  };
+
+  // The chat stream when a conversation is open; the draft/new-chat screen has none, so anchor on
+  // the composer's model selector rail and take its panel-sized ancestor as the host instead.
+  const findTarget = () => {
+    const stream = Array.from(document.querySelectorAll('[data-testid="agent-chat-scroll"]')).find(
+      (el: any) => el.getBoundingClientRect().height > 0,
+    ) as any;
+    if (stream?.parentElement) return { host: stream.parentElement, scroller: stream };
+    const chip = Array.from(document.querySelectorAll('[data-testid="combined-model-selector"]')).find(
+      (el: any) => el.getBoundingClientRect().height > 0,
+    ) as any;
+    let el = chip?.parentElement ?? null;
+    while (el && el !== document.body) {
+      if (el.getBoundingClientRect().height >= (window.innerHeight || 800) * 0.6) return { host: el, scroller: null };
+      el = el.parentElement;
+    }
+    return null;
   };
 
   const attach = async () => {
     const config = getConfig();
     if (!config.backgroundEnabled) return;
-    const scroller = Array.from(document.querySelectorAll('[data-testid="agent-chat-scroll"]')).find(
-      (el: any) => el.getBoundingClientRect().height > 0,
-    ) as any;
-    if (!scroller?.parentElement) return;
+    const found = findTarget();
+    if (!found) return;
     const kit = await import("asciify-engine/kit");
     if (stopped) return;
     const preset = (kit[config.backgroundPreset] ?? kit.constellation) as BackgroundPreset;
-    host = scroller.parentElement;
+    host = found.host;
+    scroller = found.scroller;
+    if (getComputedStyle(host).position === "static") host.style.position = "relative";
     // Sides only: quiet the centered content column. Paseo centers each row's inner wrapper
     // (width 100%, maxWidth contentMaxWidth, margin auto), so the column is a mounted row's first
     // child. Narrow window: the wrapper fills the width and the field disappears.
     const clearColumn = () => {
+      if (!scroller) return [];
       const row = scroller.querySelector("[data-history-row-id], [data-message-id]");
       const column = row?.firstElementChild ?? null;
       const bounds = host.getBoundingClientRect();
@@ -60,9 +82,11 @@ export function installChatBackground(): () => void {
     });
   };
 
-  // The chat scroller unmounts when its tab closes; poll at 1Hz rather than observe the whole DOM.
+  // The chat scroller unmounts when its tab closes and a draft chat has none; poll at 1Hz and
+  // re-attach whenever the host element changes (draft -> conversation, tab switches).
   const poll = setInterval(() => {
-    if (handle && host?.isConnected) return;
+    const found = findTarget();
+    if (handle && host?.isConnected && found && found.host === host) return;
     detach();
     void attach();
   }, 1000);
