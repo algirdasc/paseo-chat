@@ -45,9 +45,14 @@ function RichMessage({ item, theme }: PluginTimelineItemProps<Data>) {
   return <MessageBody text={item.data.text} theme={theme} />;
 }
 
+const FENCE = "```";
+const INLINE_CODE = /`[^`\n]+`/;
+
+// Paseo renders assistant markdown itself, so claim those only for fences (the highlighting is the
+// added value). User bubbles render plain text natively, so claim those for inline code too.
 function toRichMessage(item: { text: string }, variant: Data["variant"]) {
   if (!getConfig().syntaxHighlight) return undefined;
-  if (!item.text.includes("```")) return undefined;
+  if (!item.text.includes(FENCE) && !(variant === "user" && INLINE_CODE.test(item.text))) return undefined;
   return {
     items: [{ type: "plugin" as const, kind: "rich-markdown", version: 1, data: { text: item.text, variant } }],
   };
