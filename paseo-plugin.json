@@ -1,0 +1,16 @@
+{
+  "id": "paseo-chat-markdown",
+  "name": "Chat Markdown",
+  "requirements": {
+    "paseo": ">=0.13.2"
+  },
+  "description": "Syntax-highlighted code in chat, merged thinking/tool steps, and an animated ASCII background.",
+  "build": [
+    [
+      "npm",
+      "ci",
+      "--omit=dev",
+      "--ignore-scripts"
+    ]
+  ]
+}
