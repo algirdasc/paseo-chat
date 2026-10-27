@@ -177,8 +177,20 @@ export function StepsItem(props: PluginTimelineItemProps<{ head: string }>) {
   const { theme } = props;
 
   if (steps.length === 0) return null;
+
+  const cardStyle = {
+    backgroundColor: theme.colors.surface1,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  } as const;
+
   if (steps.length === 1) {
-    return <StepContent step={steps[0]!.item} phase={steps[0]!.phase} theme={theme} />;
+    return (
+      <View style={cardStyle}>
+        <StepContent step={steps[0]!.item} phase={steps[0]!.phase} theme={theme} />
+      </View>
+    );
   }
 
   const live =
@@ -203,14 +215,7 @@ export function StepsItem(props: PluginTimelineItemProps<{ head: string }>) {
         : undefined;
 
   return (
-    <View
-      style={{
-        backgroundColor: theme.colors.surface1,
-        borderRadius: 10,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-      }}
-    >
+    <View style={cardStyle}>
       <StepRow
         theme={theme}
         icon={label.icon}
