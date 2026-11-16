@@ -302,7 +302,7 @@ export function followAgent(paseo: PluginClientContext["paseo"], agentId: string
       lists.set(agentId, list);
       rebuild(agentId);
     } catch (error) {
-      console.warn("[chat-markdown] Couldn't load the timeline to merge steps", error);
+      console.warn("[pretty-chat] Couldn't load the timeline to merge steps", error);
     } finally {
       pending = undefined;
     }
@@ -325,7 +325,7 @@ export function followAgent(paseo: PluginClientContext["paseo"], agentId: string
     }
   });
   (subscription as unknown as { ready: Promise<unknown> }).ready.then(load, (error: unknown) =>
-    console.warn("[chat-markdown] Couldn't follow the timeline to merge steps", error),
+    console.warn("[pretty-chat] Couldn't follow the timeline to merge steps", error),
   );
   return () => {
     if (closed) return;
