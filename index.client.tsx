@@ -1,16 +1,16 @@
-import type { PluginClientContext, PluginSidebarItemProps, PluginTimelineItemProps } from "@getpaseo/plugin/client";
-import { useSettings } from "@getpaseo/plugin/client";
-import { SidebarRow } from "@getpaseo/plugin/client/ui";
-import { useEffect } from "react";
+import type { PluginClientContext, PluginTimelineItemProps } from "@getpaseo/plugin/client";
 import { View } from "react-native";
 import { z } from "zod";
-import { getConfig, pushConfig, subscribeConfig } from "./client/config";
+import { observeAgents } from "./client/annotations/agents";
+import { createComposerPills } from "./client/annotations/pill";
+import { AnnotationStore } from "./client/annotations/store";
+import { installWebAnnotations } from "./client/annotations/web";
+import { getConfig, subscribeConfig, useConfigBridge } from "./client/config";
 import { MessageBody } from "./client/markdown";
 import { ConfigSettings } from "./client/settings";
 import { followAgent, onShownAgent, onStaleSteps, placeStep, resetMade } from "./client/steps";
 import { StepsItem } from "./client/steps-view";
 import { installChatBackground, installChatWidth } from "./client/web";
-import { pluginConfig } from "./shared/config";
 
 const stepsSchema = z.object({ head: z.string() });
 
@@ -23,6 +23,7 @@ type Data = z.output<typeof schema>;
 
 // Mirrors Paseo's native user bubble: right-aligned, raised surface, asymmetric top-right corner.
 function RichMessage({ item, theme }: PluginTimelineItemProps<Data>) {
+  useConfigBridge();
   if (item.data.variant === "user") {
     return (
       <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
@@ -64,17 +65,6 @@ function toMergedStep(item: Parameters<typeof placeStep>[0], phase: "streaming" 
   if (!placed) return undefined;
   if (placed.as === "none") return { items: [] };
   return { items: [{ type: "plugin" as const, kind: "merged-steps", version: 1, data: { head: placed.key } }] };
-}
-
-// Always mounted beside the sidebar on desktop: pushes the host's settings into the module store
-// transformers and the DOM background read, and opens the settings screen.
-function ConfigBridge({ client }: PluginSidebarItemProps & { client: PluginClientContext }) {
-  const settings = useSettings(pluginConfig);
-  const values = settings.status === "ready" ? settings.values : null;
-  useEffect(() => {
-    if (values) pushConfig(values);
-  }, [values]);
-  return <SidebarRow icon="SlidersHorizontal" onPress={() => client.openSettings("config")} />;
 }
 
 export default function contribute(client: PluginClientContext) {
@@ -130,17 +120,21 @@ export default function contribute(client: PluginClientContext) {
     removeTransformers = addTransformers();
   });
 
+  const annotations = new AnnotationStore(client.rpc.bind(client));
+  void annotations.load();
+  const pills = createComposerPills(client, annotations);
+  const agents = observeAgents(client, pills);
+  const removeAnnotations = installWebAnnotations(client, annotations, agents);
+
   client.addTimelineRenderer({ kind: "rich-markdown", version: 1, schema, Component: RichMessage });
   client.addTimelineRenderer({ kind: "merged-steps", version: 1, schema: stepsSchema, Component: StepsItem });
-  client.addSettingsScreen({ id: "config", title: "Chat Markdown", icon: "SlidersHorizontal", Component: ConfigSettings });
-  client.addSidebarFooterItem({
-    id: "config",
-    title: "Chat Markdown",
-    Component: (props: PluginSidebarItemProps) => <ConfigBridge {...props} client={client} />,
-  });
+  client.addSettingsScreen({ id: "config", title: "Pretty Chat", icon: "SlidersHorizontal", Component: ConfigSettings });
   const removeBackground = installChatBackground();
   const removeChatWidth = installChatWidth();
   return () => {
+    removeAnnotations();
+    agents.dispose();
+    pills.dispose();
     unsubscribeConfig();
     removeChatWidth();
     removeBackground();

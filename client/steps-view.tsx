@@ -5,6 +5,7 @@ import type { AgentTimelineItem } from "@getpaseo/protocol/agent-types";
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
 import { highlightShell, syntaxColors, type Span } from "./highlight";
+import { useConfigBridge } from "./config";
 import { noteShownAgent, runOf, runVersion, stepSummary, subscribeRun, type Phase } from "./steps";
 
 const MONOSPACE = Platform.select({ ios: "Menlo", default: "monospace" });
@@ -168,6 +169,7 @@ function StepContent({ step, phase, theme }: { step: Item; phase: Phase; theme: 
 
 export function StepsItem(props: PluginTimelineItemProps<{ head: string }>) {
   const { head } = props.item.data;
+  useConfigBridge();
   const subscribe = useCallback((listener: () => void) => subscribeRun(head, listener), [head]);
   useSyncExternalStore(subscribe, () => runVersion(head));
   const { steps, ms, open: runOpen } = runOf(head);

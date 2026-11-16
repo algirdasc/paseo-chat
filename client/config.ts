@@ -1,4 +1,6 @@
-import { DEFAULT_CONFIG, type PluginConfig } from "../shared/config";
+import { useSettings } from "@getpaseo/plugin/client";
+import { useEffect } from "react";
+import { DEFAULT_CONFIG, pluginConfig, type PluginConfig } from "../shared/config";
 
 let current: PluginConfig = DEFAULT_CONFIG;
 const listeners = new Set<() => void>();
@@ -19,4 +21,15 @@ export function subscribeConfig(listener: () => void): () => void {
   return () => {
     listeners.delete(listener);
   };
+}
+
+// There is no always-mounted plugin surface (the sidebar item is gone), so every surface the
+// plugin renders — settings screen, timeline rows — pushes the host's settings into the store.
+export function useConfigBridge() {
+  const settings = useSettings(pluginConfig);
+  const values = settings.status === "ready" ? settings.values : null;
+  useEffect(() => {
+    if (values) pushConfig(values);
+  }, [values]);
+  return settings;
 }

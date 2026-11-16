@@ -1,7 +1,8 @@
-import { useSettings, type PluginSurfaceProps } from "@getpaseo/plugin/client";
+import { type PluginSurfaceProps } from "@getpaseo/plugin/client";
 import { SettingsCard, SettingsInput, SettingsSection, SettingsSelect, SettingsSwitch } from "@getpaseo/plugin/client/ui";
 import { Text } from "react-native";
-import { BACKGROUND_PRESETS, pluginConfig, type PluginConfig } from "../shared/config";
+import { BACKGROUND_PRESETS, type PluginConfig } from "../shared/config";
+import { useConfigBridge } from "./config";
 
 const NUMBER_LIMITS = {
   backgroundSpeed: [0, 5],
@@ -11,7 +12,7 @@ const NUMBER_LIMITS = {
 } as const;
 
 export function ConfigSettings({ theme }: PluginSurfaceProps) {
-  const settings = useSettings(pluginConfig);
+  const settings = useConfigBridge();
 
   if (settings.status === "loading") {
     return <Text style={{ color: theme.colors.foregroundMuted }}>Loading…</Text>;

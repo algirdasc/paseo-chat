@@ -1,6 +1,6 @@
-# Chat Markdown
+# Pretty Chat
 
-Renders chat messages that contain fenced code blocks as Markdown with syntax-highlighted code, folds each run of thinking and tool calls into one expandable merged row, and can draw an animated ASCII background (the Asciify engine's curated fields) beside the chat content. All of it is adjustable from Settings → Plugins → Chat Markdown.
+Renders chat messages that contain fenced code blocks as Markdown with syntax-highlighted code, folds each run of thinking and tool calls into one expandable merged row, lets you annotate passages of a chat and send the comments to the agent, and can draw an animated ASCII background (the Asciify engine's curated fields) beside the chat content. All of it is adjustable from Settings → Plugins → Pretty Chat.
 
 ## Settings
 
@@ -9,6 +9,12 @@ Chat: syntax highlighting on/off, merged steps on/off, and a chat width override
 ## Steps grouping
 
 The thoughts and tool calls between two replies collapse into a single row, such as "Thought 1 time, ran 1 command, and read 1 file · 3s". While the agent works, the row names the step in progress; a failed step turns the row red. Open the row to see each step. Plan approval cards and Paseo's own todo and subagent rows are left native. The plugin follows the timelines of the agents on screen to place steps into runs.
+
+## Annotations
+
+Select any passage in a chat to annotate it: leave a comment, and every waiting comment goes out with your next message to that agent, formatted the way Paseo's own browser annotations are. "Ask in new chat" starts a fresh agent in the same workspace with the recent conversation as context and the passage plus your question as its first message. Waiting annotations keep their passage tinted with a numbered badge; clicking the badge or the passage opens the comment. A composer pill lists what's waiting and can send or clear it.
+
+Annotations persist on the host in `<PASEO_HOME>/plugin-data/pretty-chat/annotations.json` and sync to every connected client. The selection toolbar, badges, and send hook run on desktop and web; elsewhere the composer pill is the whole feature.
 
 ## Markdown and code
 

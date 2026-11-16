@@ -1,10 +1,11 @@
 {
-  "name": "paseo-chat-markdown",
+  "name": "pretty-chat",
   "version": "0.1.0",
   "files": [
     "paseo-plugin.json",
     "OVERVIEW.md",
     "OVERVIEW.*.md",
+    "NOTICE.md",
     "index.client.ts",
     "index.client.tsx",
     "index.server.ts",
@@ -17,11 +18,12 @@
     "images/"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.server.json"
   },
   "devDependencies": {
     "@getpaseo/plugin": "0.15.4",
     "@tanstack/react-query": "^5.107.1",
+    "@types/node": "^22.20.5",
     "@types/react": "~19.3.0",
     "react": "19.3.1",
     "react-native": "0.88.1",
@@ -31,22 +33,23 @@
   "dependencies": {
     "asciify-engine": "^4.32.8"
   },
-  "description": "Paseo plugin: syntax-highlighted code in chat, merged thinking/tool steps, and an Asciify background",
+  "description": "Paseo plugin: syntax-highlighted code in chat, merged thinking/tool steps, chat annotations, and an Asciify background",
   "license": "MIT",
   "author": "Algirdas \u010ci\u010dinskas",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/algirdasc/paseo-chat.git"
+    "url": "git+https://github.com/algirdasc/paseo-pretty-chat.git"
   },
-  "homepage": "https://github.com/algirdasc/paseo-chat#readme",
+  "homepage": "https://github.com/algirdasc/paseo-pretty-chat#readme",
   "bugs": {
-    "url": "https://github.com/algirdasc/paseo-chat/issues"
+    "url": "https://github.com/algirdasc/paseo-pretty-chat/issues"
   },
   "keywords": [
     "paseo",
     "paseo-plugin",
     "markdown",
     "syntax-highlighting",
+    "annotations",
     "ascii",
     "chat"
   ]
