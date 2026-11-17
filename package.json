@@ -31,7 +31,7 @@
     "zod": "^4.4.3"
   },
   "dependencies": {
-    "asciify-engine": "^4.32.8"
+    "asciify-engine": "^4.33.0"
   },
   "description": "Paseo plugin: syntax-highlighted code in chat, merged thinking/tool steps, chat annotations, and an Asciify background",
   "license": "MIT",
