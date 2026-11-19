@@ -94,10 +94,11 @@ export function installChatBackground(): () => void {
   };
 
   // The chat scroller unmounts when its tab closes and a draft chat has none; poll at 1Hz and
-  // re-attach whenever the host element changes (draft -> conversation, tab switches).
+  // re-attach whenever the host element changes. The scroller matters too: the draft and
+  // conversation paths can resolve to the same host, and sides-only needs the live scroller.
   const poll = setInterval(() => {
     const found = findTarget();
-    if (handle && host?.isConnected && found && found.host === host) return;
+    if (handle && host?.isConnected && found && found.host === host && found.scroller === scroller) return;
     detach();
     void attach();
   }, 1000);
