@@ -5,7 +5,7 @@ import { DEFAULT_CONFIG, pluginConfig, type PluginConfig } from "../shared/confi
 let current: PluginConfig = DEFAULT_CONFIG;
 const listeners = new Set<() => void>();
 
-/** Transformers and the DOM background run outside React; this is their read of the settings. */
+/** Transformers and the chat-width style run outside React; this is their read of the settings. */
 export function getConfig(): PluginConfig {
   return current;
 }

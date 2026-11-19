@@ -4,7 +4,7 @@
   "requirements": {
     "paseo": ">=0.13.2"
   },
-  "description": "Syntax-highlighted code in chat, merged thinking/tool steps, chat annotations, and an animated ASCII background.",
+  "description": "Syntax-highlighted code in chat, merged thinking/tool steps, and chat annotations.",
   "build": [
     [
       "npm",

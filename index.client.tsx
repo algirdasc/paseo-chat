@@ -10,7 +10,7 @@ import { MessageBody } from "./client/markdown";
 import { ConfigSettings } from "./client/settings";
 import { followAgent, onShownAgent, onStaleSteps, placeStep, resetMade } from "./client/steps";
 import { StepsItem } from "./client/steps-view";
-import { installChatBackground, installChatWidth } from "./client/web";
+import { installChatWidth } from "./client/web";
 
 const stepsSchema = z.object({ head: z.string() });
 
@@ -129,7 +129,6 @@ export default function contribute(client: PluginClientContext) {
   client.addTimelineRenderer({ kind: "rich-markdown", version: 1, schema, Component: RichMessage });
   client.addTimelineRenderer({ kind: "merged-steps", version: 1, schema: stepsSchema, Component: StepsItem });
   client.addSettingsScreen({ id: "config", title: "Pretty Chat", icon: "SlidersHorizontal", Component: ConfigSettings });
-  const removeBackground = installChatBackground();
   const removeChatWidth = installChatWidth();
   return () => {
     removeAnnotations();
@@ -137,7 +136,6 @@ export default function contribute(client: PluginClientContext) {
     pills.dispose();
     unsubscribeConfig();
     removeChatWidth();
-    removeBackground();
     removeTransformers();
     if (staleTimer) clearTimeout(staleTimer);
     for (const stop of followed.values()) stop();
