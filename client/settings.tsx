@@ -72,7 +72,7 @@ export function ConfigSettings({ theme }: PluginSurfaceProps) {
             value={values.backgroundPreset}
             options={BACKGROUND_PRESETS.map((preset) => ({
               value: preset,
-              label: preset.charAt(0).toUpperCase() + preset.slice(1),
+              label: preset.charAt(0).toUpperCase() + preset.slice(1).replace(/([A-Z])/g, " $1"),
             }))}
             onValueChange={(backgroundPreset) => save({ backgroundPreset })}
           />

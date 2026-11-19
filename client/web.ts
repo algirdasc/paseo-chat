@@ -33,7 +33,18 @@ export function installChatBackground(): () => void {
     const stream = Array.from(document.querySelectorAll('[data-testid="agent-chat-scroll"]')).find(
       (el: any) => el.getBoundingClientRect().height > 0,
     ) as any;
-    if (stream?.parentElement) return { host: stream.parentElement, scroller: stream };
+    if (stream?.parentElement) {
+      // Cover the composer too: host the background on the lowest ancestor that also holds the
+      // message input, so a growing composer can't push the field up and expose a gap below.
+      let host = stream.parentElement;
+      const composer = Array.from(document.querySelectorAll('[data-testid="message-input-root"]')).find(
+        (el: any) => el.getBoundingClientRect().height > 0,
+      ) as any;
+      while (composer && host.parentElement && host.parentElement !== document.body && !host.contains(composer)) {
+        host = host.parentElement;
+      }
+      return { host, scroller: stream };
+    }
     const chip = Array.from(document.querySelectorAll('[data-testid="combined-model-selector"]')).find(
       (el: any) => el.getBoundingClientRect().height > 0,
     ) as any;
