@@ -6,10 +6,14 @@ import { createComposerPills } from "./client/annotations/pill";
 import { AnnotationStore } from "./client/annotations/store";
 import { installWebAnnotations } from "./client/annotations/web";
 import { getConfig, subscribeConfig, useConfigBridge } from "./client/config";
+import { HostMonitorItem } from "./client/host-monitor";
 import { MessageBody } from "./client/markdown";
 import { ConfigSettings } from "./client/settings";
 import { followAgent, onShownAgent, onStaleSteps, placeStep, resetMade } from "./client/steps";
 import { StepsItem } from "./client/steps-view";
+import { followPromptSettings } from "./client/quick-prompts/follow";
+import { createPromptPills } from "./client/quick-prompts/pills";
+import { QuickPromptsSettingsScreen } from "./client/quick-prompts/settings-screen";
 import { installChatWidth } from "./client/web";
 
 const stepsSchema = z.object({ head: z.string() });
@@ -123,17 +127,46 @@ export default function contribute(client: PluginClientContext) {
   const annotations = new AnnotationStore(client.rpc.bind(client));
   void annotations.load();
   const pills = createComposerPills(client, annotations);
-  const agents = observeAgents(client, pills);
+
+  const QUICK_PROMPTS_SCREEN_ID = "quick-prompts";
+  const promptPills = createPromptPills({
+    addComposerPill: (contribution) => client.addComposerPill(contribution),
+    send: (agentId, text) => client.paseo.agents.ref(agentId).send(text),
+    openSettings: () => client.openSettings(QUICK_PROMPTS_SCREEN_ID),
+  });
+  const promptsLifetime = new AbortController();
+  followPromptSettings(client, promptPills, promptsLifetime.signal);
+
+  // One agent directory fans out to every pill owner.
+  const agents = observeAgents(client, {
+    upsert: (agent) => {
+      pills.upsert(agent);
+      promptPills.upsertAgent(agent);
+    },
+    remove: (agentId) => {
+      pills.remove(agentId);
+      promptPills.removeAgent(agentId);
+    },
+  });
   const removeAnnotations = installWebAnnotations(client, annotations, agents);
 
   client.addTimelineRenderer({ kind: "rich-markdown", version: 1, schema, Component: RichMessage });
   client.addTimelineRenderer({ kind: "merged-steps", version: 1, schema: stepsSchema, Component: StepsItem });
   client.addSettingsScreen({ id: "config", title: "Pretty Chat", icon: "SlidersHorizontal", Component: ConfigSettings });
+  client.addSettingsScreen({
+    id: QUICK_PROMPTS_SCREEN_ID,
+    title: "Quick prompts",
+    icon: "Zap",
+    Component: QuickPromptsSettingsScreen,
+  });
+  client.addSidebarFooterItem({ id: "host-monitor", title: "Host usage", Component: HostMonitorItem });
   const removeChatWidth = installChatWidth();
   return () => {
     removeAnnotations();
     agents.dispose();
     pills.dispose();
+    promptsLifetime.abort();
+    promptPills.removeAll();
     unsubscribeConfig();
     removeChatWidth();
     removeTransformers();

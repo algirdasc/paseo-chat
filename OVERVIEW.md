@@ -1,10 +1,10 @@
 # Pretty Chat
 
-Renders chat messages that contain fenced code blocks as Markdown with syntax-highlighted code, folds each run of thinking and tool calls into one expandable merged row, and lets you annotate passages of a chat and send the comments to the agent. All of it is adjustable from Settings → Plugins → Pretty Chat.
+Renders chat messages that contain fenced code blocks as Markdown with syntax-highlighted code, folds each run of thinking and tool calls into one expandable merged row, lets you annotate passages of a chat and send the comments to the agent, keeps your repeated prompts as pills above every agent's composer, and shows the daemon host's CPU and RAM usage at the bottom of the sidebar. All of it is adjustable from Settings → Plugins → Pretty Chat.
 
 ## Settings
 
-Chat: syntax highlighting on/off, merged steps on/off, and a chat width override in px (0 follows Paseo's own content width). Values persist on the host and sync across connected clients.
+Chat: syntax highlighting on/off, merged steps on/off, and a chat width override in px (0 follows Paseo's own content width). Host monitor: sidebar CPU/RAM line on/off and the refresh interval in seconds (default 5). Quick prompts live on their own settings page: up to 20 prompts with a label and text, reordered and shown as separate pills or one Prompts menu. Values persist on the host and sync across connected clients.
 
 ## Steps grouping
 
