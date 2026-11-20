@@ -55,8 +55,8 @@ export function ConfigSettings({ theme }: PluginSurfaceProps) {
       <SettingsSection title="Host monitor">
         <SettingsCard>
           <SettingsSwitch
-            label="CPU and RAM in the sidebar"
-            hint="Shows the daemon host's usage at the bottom of the sidebar."
+            label="Host usage in the sidebar"
+            hint="CPU, RAM, load, uptime, and network speed of the daemon host, at the bottom of the sidebar."
             value={values.hostMonitorEnabled}
             onValueChange={(hostMonitorEnabled) => save({ hostMonitorEnabled })}
           />
