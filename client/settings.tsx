@@ -6,6 +6,7 @@ import { useConfigBridge } from "./config";
 
 const NUMBER_LIMITS = {
   chatMaxWidth: [0, 2000],
+  hostMonitorIntervalSeconds: [1, 300],
 } as const;
 
 export function ConfigSettings({ theme }: PluginSurfaceProps) {
@@ -48,6 +49,23 @@ export function ConfigSettings({ theme }: PluginSurfaceProps) {
             initialValue={String(values.chatMaxWidth)}
             placeholder="0"
             onChangeText={saveNumber("chatMaxWidth")}
+          />
+        </SettingsCard>
+      </SettingsSection>
+      <SettingsSection title="Host monitor">
+        <SettingsCard>
+          <SettingsSwitch
+            label="CPU and RAM in the sidebar"
+            hint="Shows the daemon host's usage at the bottom of the sidebar."
+            value={values.hostMonitorEnabled}
+            onValueChange={(hostMonitorEnabled) => save({ hostMonitorEnabled })}
+          />
+          <SettingsInput
+            label="Refresh interval (seconds)"
+            hint="1 to 300. Default 5."
+            initialValue={String(values.hostMonitorIntervalSeconds)}
+            placeholder="5"
+            onChangeText={saveNumber("hostMonitorIntervalSeconds")}
           />
         </SettingsCard>
       </SettingsSection>
