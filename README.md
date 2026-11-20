@@ -8,7 +8,7 @@ A [Paseo](https://paseo.sh) plugin that polishes the agent chat: syntax-highligh
 - **Merged steps.** The thoughts and tool calls between two replies fold into one muted row — "Thought 1 time, ran 1 command, and read 1 file · 3s" — with the live step while working and red failure counts. Open it for each step, with shell commands syntax-highlighted. Plan approvals, todos, and subagent rows stay native.
 - **Annotations.** Select any passage in a chat, leave a comment, and every waiting comment goes out with your next message — or ask about the passage in a new chat. Annotated passages stay tinted with a numbered badge; a composer pill lists what's waiting. Desktop and web only.
 - **Quick prompts.** Your repeated prompts as pills above every agent's composer — tap to send. One pill each or a single Prompts menu; managed from their own settings page.
-- **Host monitor.** The daemon host's CPU and RAM usage as a quiet line at the bottom of the sidebar, refreshed on a configurable interval.
+- **Host monitor.** The daemon host's CPU, RAM, load, uptime, and network speed as a quiet centered line at the bottom of the sidebar, refreshed on a configurable interval.
 - **Settings page** under Settings → Plugins → Pretty Chat: toggles for highlighting and step merging, a chat width override in px, and the host monitor. Persisted on the host, synced across clients.
 
 ## Screenshots

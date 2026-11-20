@@ -4,7 +4,7 @@ Renders chat messages that contain fenced code blocks as Markdown with syntax-hi
 
 ## Settings
 
-Chat: syntax highlighting on/off, merged steps on/off, and a chat width override in px (0 follows Paseo's own content width). Host monitor: sidebar CPU/RAM line on/off and the refresh interval in seconds (default 5). Quick prompts live on their own settings page: up to 20 prompts with a label and text, reordered and shown as separate pills or one Prompts menu. Values persist on the host and sync across connected clients.
+Chat: syntax highlighting on/off, merged steps on/off, and a chat width override in px (0 follows Paseo's own content width). Host monitor: sidebar line with the daemon host's CPU, RAM, load, uptime, and network speed on/off, and the refresh interval in seconds (default 5). Quick prompts live on their own settings page: up to 20 prompts with a label and text, reordered and shown as separate pills or one Prompts menu. Values persist on the host and sync across connected clients.
 
 ## Steps grouping
 
